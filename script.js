@@ -3,6 +3,7 @@ console.log("Le script est en cours d'exécution !");
 // Configuration du jeu
 const config = {
     type: Phaser.AUTO,
+    // Définit la largeur et la hauteur en fonction de la fenêtre du navigateur
     width: window.innerWidth,
     height: window.innerHeight,
     parent: 'game-container',
@@ -47,6 +48,7 @@ function preload() {
 function create() {
     // Arrière-plan couvrant tout l'écran
     const backgroundImage = this.add.image(0, 0, 'background').setOrigin(0, 0);
+    // Met à jour la taille de l'image de fond pour qu'elle corresponde à la fenêtre
     backgroundImage.displayWidth = this.sys.game.config.width;
     backgroundImage.displayHeight = this.sys.game.config.height;
 
