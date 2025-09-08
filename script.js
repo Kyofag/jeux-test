@@ -11,7 +11,6 @@ const config = {
             debug: false
         }
     },
-    // Ajoutez cette nouvelle section
     render: {
         powerPreference: 'high-performance',
         willReadFrequently: true
@@ -43,7 +42,7 @@ function preload() {
 
 // Fonction de création de la scène
 function create() {
-    // === CHANGER ICI : Arrière-plan couvrant tout l'écran ===
+    // Arrière-plan couvrant tout l'écran
     const backgroundImage = this.add.image(0, 0, 'background').setOrigin(0, 0);
     backgroundImage.displayWidth = config.width;
     backgroundImage.displayHeight = config.height;
@@ -51,9 +50,9 @@ function create() {
     // Création du groupe de plateformes
     platforms = this.physics.add.staticGroup();
 
-    // === CHANGER ICI : Agencement "Champ de Bataille" ===
+    // Agencement "Champ de Bataille"
     // Le sol principal
-    platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody(); // Plus large pour le sol
+    platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
 
     // Plateforme centrale supérieure
     platforms.create(400, 300, 'platform').setScale(1.5, 1).refreshBody();
@@ -62,27 +61,26 @@ function create() {
     platforms.create(150, 420, 'platform').setScale(1, 1).refreshBody();
     platforms.create(650, 420, 'platform').setScale(1, 1).refreshBody();
 
-
     // Création du joueur
-    player = this.physics.add.sprite(100, 450, 'dude'); // Position initiale ajustée
+    player = this.physics.add.sprite(100, 450, 'dude');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
 
-    // Animations du joueur
+    // Animations pour votre spritesheet
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
         frameRate: 10,
         repeat: -1
     });
     this.anims.create({
         key: 'turn',
-        frames: [{ key: 'dude', frame: 4 }],
+        frames: [{ key: 'dude', frame: 3 }],
         frameRate: 20
     });
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: this.anims.generateFrameNumbers('dude', { start: 4, end: 6 }),
         frameRate: 10,
         repeat: -1
     });
@@ -112,11 +110,11 @@ function update() {
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
-        player.flipX = true; // Pour retourner le sprite
+        player.flipX = true;
     } else if (cursors.right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
-        player.flipX = false; // Pour que le sprite regarde à droite
+        player.flipX = false;
     } else {
         player.setVelocityX(0);
         player.anims.play('turn');
@@ -139,7 +137,7 @@ function update() {
 
     // Attaque de base
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
-        attackHitbox.x = player.x + (player.flipX ? -20 : 20); // Positionne en fonction de la direction
+        attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
         attackHitbox.setVisible(true);
 
@@ -153,6 +151,6 @@ function update() {
 function onPlayerDeath(player, deathZone) {
     console.log("Le joueur est tombé dans le vide !");
     player.setX(100);
-    player.setY(450); // Réinitialisation de la position
+    player.setY(450);
     player.setVelocity(0, 0);
 }
