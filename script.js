@@ -32,6 +32,7 @@ let jumpKey;
 let attackKey;
 let attackHitbox;
 let isAttacking = false;
+let jumpCount = 0; // Ajout d'une variable pour le double saut
 
 // Initialisation du jeu
 const game = new Phaser.Game(config);
@@ -55,8 +56,8 @@ function create() {
 
     // La plateforme du sol
     const floor = platforms.create(
-        this.sys.game.config.width / 2, // Centre la plateforme horizontalement
-        this.sys.game.config.height - 32, // Place la plateforme en bas de l'écran
+        this.sys.game.config.width / 2, 
+        this.sys.game.config.height - 32, 
         'platform'
     ).setScale(this.sys.game.config.width / 200, 1).refreshBody();
 
@@ -120,9 +121,15 @@ function update() {
         player.anims.play('turn');
     }
 
-    // Saut du joueur avec la barre d'espace
-    if (jumpKey.isDown && player.body.touching.down) {
+    // Réinitialise le nombre de sauts quand le joueur touche le sol
+    if (player.body.touching.down) {
+        jumpCount = 2;
+    }
+
+    // Saut du joueur
+    if (Phaser.Input.Keyboard.JustDown(jumpKey) && jumpCount > 0) {
         player.setVelocityY(-330);
+        jumpCount--;
     }
 
     // Mouvement vers le bas (s'accroupir)
