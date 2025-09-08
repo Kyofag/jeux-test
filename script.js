@@ -32,6 +32,7 @@ let jumpKey;
 let attackKey;
 let attackHitbox;
 let isAttacking = false;
+let isTouchingDown = false; // Variable pour le saut de coyote
 
 // Initialisation du jeu
 const game = new Phaser.Game(config);
@@ -119,8 +120,21 @@ function update() {
         player.anims.play('turn');
     }
 
+    // --- MISE À JOUR : SAUT DE COYOTE ---
+    // Enregistre l'état du sol pour le saut de coyote
+    if (player.body.touching.down) {
+        isTouchingDown = true;
+    } else {
+        // Commence un compte à rebours de 100ms
+        if (isTouchingDown) {
+            this.time.delayedCall(100, () => {
+                isTouchingDown = false;
+            });
+        }
+    }
+
     // Saut du joueur
-    if (jumpKey.isDown && player.body.touching.down) {
+    if (jumpKey.isDown && isTouchingDown) {
         player.setVelocityY(-330);
     }
 
@@ -134,7 +148,7 @@ function update() {
         player.body.offset.y = 0;
     }
 
-    // Système d'attaque plus fiable
+    // Système d'attaque
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
         isAttacking = true;
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
@@ -147,7 +161,7 @@ function update() {
         });
     }
 
-    // Positionne la hitbox pour qu'elle suive le joueur pendant l'attaque
+    // Positionne la hitbox pour qu'elle suive le joueur
     if (isAttacking) {
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
