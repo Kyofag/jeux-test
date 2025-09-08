@@ -38,16 +38,28 @@ function preload() {
 
 // Fonction de création de la scène
 function create() {
-    // Arrière-plan et plateformes
-    this.add.image(400, 300, 'background');
+    // === CHANGER ICI : Arrière-plan couvrant tout l'écran ===
+    const backgroundImage = this.add.image(0, 0, 'background').setOrigin(0, 0);
+    backgroundImage.displayWidth = config.width;
+    backgroundImage.displayHeight = config.height;
+
+    // Création du groupe de plateformes
     platforms = this.physics.add.staticGroup();
-    platforms.create(400, 568, 'platform').setScale(2).refreshBody();
-    platforms.create(600, 400, 'platform');
-    platforms.create(50, 250, 'platform');
-    platforms.create(750, 220, 'platform');
+
+    // === CHANGER ICI : Agencement "Champ de Bataille" ===
+    // Le sol principal
+    platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody(); // Plus large pour le sol
+
+    // Plateforme centrale supérieure
+    platforms.create(400, 300, 'platform').setScale(1.5, 1).refreshBody();
+
+    // Plateformes latérales (gauche et droite)
+    platforms.create(150, 420, 'platform').setScale(1, 1).refreshBody();
+    platforms.create(650, 420, 'platform').setScale(1, 1).refreshBody();
+
 
     // Création du joueur
-    player = this.physics.add.sprite(100, 450, 'dude');
+    player = this.physics.add.sprite(100, 450, 'dude'); // Position initiale ajustée
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
 
@@ -95,9 +107,11 @@ function update() {
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
         player.anims.play('left', true);
+        player.flipX = true; // Pour retourner le sprite
     } else if (cursors.right.isDown) {
         player.setVelocityX(160);
         player.anims.play('right', true);
+        player.flipX = false; // Pour que le sprite regarde à droite
     } else {
         player.setVelocityX(0);
         player.anims.play('turn');
@@ -110,24 +124,20 @@ function update() {
 
     // Mouvement vers le bas (s'accroupir)
     if (cursors.down.isDown) {
-        // Redimensionne la hitbox pour simuler l'accroupissement
         player.body.setSize(32, 24, true);
         player.body.offset.y = 24;
         player.anims.play('turn');
     } else {
-        // Redimensionne la hitbox à sa taille d'origine
         player.body.setSize(32, 48, true);
         player.body.offset.y = 0;
     }
 
     // Attaque de base
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
-        // Positionne la hitbox devant le joueur
-        attackHitbox.x = player.x + (player.flipX ? -20 : 20);
+        attackHitbox.x = player.x + (player.flipX ? -20 : 20); // Positionne en fonction de la direction
         attackHitbox.y = player.y;
         attackHitbox.setVisible(true);
 
-        // Désactive la hitbox d'attaque après 100 millisecondes
         this.time.delayedCall(100, () => {
             attackHitbox.setVisible(false);
         });
@@ -138,6 +148,6 @@ function update() {
 function onPlayerDeath(player, deathZone) {
     console.log("Le joueur est tombé dans le vide !");
     player.setX(100);
-    player.setY(450);
+    player.setY(450); // Réinitialisation de la position
     player.setVelocity(0, 0);
 }
