@@ -55,7 +55,8 @@ function create() {
 
     // Agencement simplifié
     // Le sol principal
-    platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
+    const floor = platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
+    floor.body.setSize(floor.width, floor.height);
 
     // Création du joueur
     player = this.physics.add.sprite(100, 450, 'dude');
