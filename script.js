@@ -54,7 +54,7 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // La plateforme du sol
-    const floor = platforms.create(400, 50, 'platform').setScale(4, 1).refreshBody();
+    const floor = platforms.create(400, 568, 'platform').setScale(4, 0.25).refreshBody(); // Hauteur divisée par 4
 
     // Redimensionne la hitbox pour qu'elle corresponde à la plateforme
     floor.body.setSize(floor.displayWidth, floor.displayHeight);
