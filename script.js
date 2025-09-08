@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true // Activé pour voir les zones de collision
+            debug: true
         }
     },
     render: {
@@ -28,7 +28,7 @@ const config = {
 let player;
 let platforms;
 let cursors;
-let deathZone;
+let jumpKey; // Nouvelle variable pour la touche de saut
 let attackKey;
 let attackHitbox;
 let isAttacking = false;
@@ -92,6 +92,7 @@ function create() {
 
     // Initialisation des contrôles du clavier
     cursors = this.input.keyboard.createCursorKeys();
+    jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE); // Touche de saut: Barre d'espace
     attackKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
     // Création de la hitbox d'attaque (invisible)
@@ -117,8 +118,8 @@ function update() {
         player.anims.play('turn');
     }
 
-    // Saut du joueur
-    if (cursors.up.isDown && player.body.touching.down) {
+    // Saut du joueur (maintenant avec la barre d'espace)
+    if (jumpKey.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
 
