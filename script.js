@@ -8,8 +8,13 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: false // Mettez à 'true' pour voir les zones de collision
+            debug: false
         }
+    },
+    // Ajoutez cette nouvelle section
+    render: {
+        powerPreference: 'high-performance',
+        willReadFrequently: true
     },
     scene: {
         preload: preload,
