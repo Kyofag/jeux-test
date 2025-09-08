@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true
+            debug: true // Activé pour voir les zones de collision
         }
     },
     render: {
@@ -31,7 +31,7 @@ let cursors;
 let deathZone;
 let attackKey;
 let attackHitbox;
-let isAttacking = false; // Nouvelle variable pour gérer l'état d'attaque
+let isAttacking = false;
 
 // Initialisation du jeu
 const game = new Phaser.Game(config);
@@ -41,7 +41,7 @@ function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
     // --- CHANGEMENT TEMPORAIRE POUR LE DÉBOGAGE DU "DUDE" ---
-    this.load.image('dude_temp', 'image/dude.png');
+    this.load.image('dude_temp', 'image/dude.png'); // Charge l'image de 500x500 comme une image normale
 }
 
 // Fonction de création de la scène
@@ -55,12 +55,17 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // Agencement "Champ de Bataille"
+    // Le sol principal
     platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
-    platforms.create(400, 300, 'platform').setScale(1.5, 1).refreshBody();
-    platforms.create(150, 420, 'platform').setScale(1, 1).refreshBody();
-    platforms.create(650, 420, 'platform').setScale(1, 1).refreshBody();
 
-    // Création du joueur - UTILISE LE FICHIER TEMPORAIRE
+    // Plateforme centrale supérieure (réduite)
+    platforms.create(400, 300, 'platform').setScale(0.75, 0.5).refreshBody();
+
+    // Plateformes latérales (réduites)
+    platforms.create(150, 420, 'platform').setScale(0.5, 0.5).refreshBody();
+    platforms.create(650, 420, 'platform').setScale(0.5, 0.5).refreshBody();
+
+    // Création du joueur
     player = this.physics.add.sprite(100, 450, 'dude_temp');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
@@ -115,8 +120,7 @@ function update() {
         player.body.offset.y = 0;
     }
 
-    // --- MISE À JOUR : SYSTÈME D'ATTAQUE PLUS FIABLE ---
-    // Si la touche d'attaque est enfoncée (une seule fois)
+    // Système d'attaque plus fiable
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
         isAttacking = true;
         // Positionne la hitbox devant le joueur
