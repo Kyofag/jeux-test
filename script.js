@@ -3,7 +3,6 @@ console.log("Le script est en cours d'exécution !");
 // Configuration du jeu
 const config = {
     type: Phaser.AUTO,
-    // Définit la largeur et la hauteur en fonction de la fenêtre du navigateur
     width: window.innerWidth,
     height: window.innerHeight,
     parent: 'game-container',
@@ -48,7 +47,6 @@ function preload() {
 function create() {
     // Arrière-plan couvrant tout l'écran
     const backgroundImage = this.add.image(0, 0, 'background').setOrigin(0, 0);
-    // Met à jour la taille de l'image de fond pour qu'elle corresponde à la fenêtre
     backgroundImage.displayWidth = this.sys.game.config.width;
     backgroundImage.displayHeight = this.sys.game.config.height;
 
@@ -56,7 +54,11 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // La plateforme du sol
-    const floor = platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
+    const floor = platforms.create(
+        this.sys.game.config.width / 2, // Centre la plateforme horizontalement
+        this.sys.game.config.height - 32, // Place la plateforme en bas de l'écran
+        'platform'
+    ).setScale(this.sys.game.config.width / 200, 1).refreshBody();
 
     // Création du joueur
     player = this.physics.add.sprite(100, 450, 'dude');
