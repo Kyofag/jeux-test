@@ -1,3 +1,5 @@
+console.log("Le script est en cours d'exécution !");
+
 // Configuration du jeu
 const config = {
     type: Phaser.AUTO,
@@ -8,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true // Changez cette ligne à 'true'
+            debug: true
         }
     },
     render: {
