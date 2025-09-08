@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true
+            debug: true // Activé pour voir les zones de collision
         }
     },
     render: {
@@ -39,7 +39,10 @@ const game = new Phaser.Game(config);
 function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
-    this.load.spritesheet('dude', 'image/dude.png', { frameWidth: 32, frameHeight: 48 });
+    // --- CHANGEMENT TEMPORAIRE POUR LE DÉBOGAGE DU "DUDE" ---
+    // Nous chargeons 'dude' comme une image simple temporairement.
+    // L'ancienne ligne commentée: this.load.spritesheet('dude', 'image/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('dude_temp', 'image/dude.png'); // Charge l'image de 500x500 comme une image normale
 }
 
 // Fonction de création de la scène
@@ -63,12 +66,16 @@ function create() {
     platforms.create(150, 420, 'platform').setScale(1, 1).refreshBody();
     platforms.create(650, 420, 'platform').setScale(1, 1).refreshBody();
 
-    // Création du joueur
-    player = this.physics.add.sprite(100, 450, 'dude');
+    // Création du joueur - UTILISE LE FICHIER TEMPORAIRE
+    player = this.physics.add.sprite(100, 450, 'dude_temp'); // Utilise 'dude_temp' pour l'affichage
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
+    player.setScale(0.1); // Réduit la taille pour que l'image de 500x500 ne soit pas gigantesque
+    player.body.setSize(32, 48); // Force la hitbox à être de la bonne taille
 
-    // Animations pour votre spritesheet
+    // --- ANIMATIONS DÉSACTIVÉES TEMPORAIREMENT ---
+    // Commenté car 'dude_temp' n'est pas une spritesheet
+    /*
     this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
@@ -86,6 +93,7 @@ function create() {
         frameRate: 10,
         repeat: -1
     });
+    */
 
     // Gestion des collisions avec les plateformes
     this.physics.add.collider(player, platforms);
@@ -111,15 +119,15 @@ function update() {
     // Mouvement du joueur (gauche/droite)
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
-        player.anims.play('left', true);
+        // player.anims.play('left', true); // Animations désactivées
         player.flipX = true;
     } else if (cursors.right.isDown) {
         player.setVelocityX(160);
-        player.anims.play('right', true);
+        // player.anims.play('right', true); // Animations désactivées
         player.flipX = false;
     } else {
         player.setVelocityX(0);
-        player.anims.play('turn');
+        // player.anims.play('turn'); // Animations désactivées
     }
 
     // Saut du joueur
@@ -131,7 +139,7 @@ function update() {
     if (cursors.down.isDown) {
         player.body.setSize(32, 24, true);
         player.body.offset.y = 24;
-        player.anims.play('turn');
+        // player.anims.play('turn'); // Animations désactivées
     } else {
         player.body.setSize(32, 48, true);
         player.body.offset.y = 0;
