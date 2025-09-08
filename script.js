@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true
+            debug: true // Activé pour voir les zones de collision
         }
     },
     render: {
@@ -63,6 +63,13 @@ function create() {
     player = this.physics.add.sprite(100, 450, 'dude');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
+
+    // --- MISE À JOUR : TAILLE DE LA HITBOX DU JOUEUR ---
+    // Ajuste la hitbox du joueur pour qu'elle soit plus grande
+    // La taille du cadre est de 32x48, mais l'image contient de l'espace transparent
+    // Nous allons ajuster la hitbox pour qu'elle soit plus haute et mieux centrée
+    player.body.setSize(22, 40);
+    player.body.setOffset(5, 8); // Déplace la hitbox pour qu'elle soit centrée sur le personnage
 
     // Animations du "dude"
     this.anims.create({
@@ -126,12 +133,12 @@ function update() {
 
     // Mouvement vers le bas (s'accroupir)
     if (cursors.down.isDown) {
-        player.body.setSize(32, 24, true);
-        player.body.offset.y = 24;
+        player.body.setSize(22, 20);
+        player.body.setOffset(5, 28);
         player.anims.play('turn');
     } else {
-        player.body.setSize(32, 48, true);
-        player.body.offset.y = 0;
+        player.body.setSize(22, 40);
+        player.body.setOffset(5, 8);
     }
 
     // Système d'attaque
