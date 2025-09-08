@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true // Activé pour voir les zones de collision
+            debug: true
         }
     },
     render: {
@@ -32,7 +32,6 @@ let jumpKey;
 let attackKey;
 let attackHitbox;
 let isAttacking = false;
-let isTouchingDown = false; // Variable pour le saut de coyote
 
 // Initialisation du jeu
 const game = new Phaser.Game(config);
@@ -120,21 +119,8 @@ function update() {
         player.anims.play('turn');
     }
 
-    // --- MISE À JOUR : SAUT DE COYOTE ---
-    // Enregistre l'état du sol pour le saut de coyote
-    if (player.body.touching.down) {
-        isTouchingDown = true;
-    } else {
-        // Commence un compte à rebours de 100ms
-        if (isTouchingDown) {
-            this.time.delayedCall(100, () => {
-                isTouchingDown = false;
-            });
-        }
-    }
-
-    // Saut du joueur
-    if (jumpKey.isDown && isTouchingDown) {
+    // Saut du joueur avec la barre d'espace
+    if (jumpKey.isDown && player.body.touching.down) {
         player.setVelocityY(-330);
     }
 
