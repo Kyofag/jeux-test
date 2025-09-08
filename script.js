@@ -3,8 +3,9 @@ console.log("Le script est en cours d'exécution !");
 // Configuration du jeu
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    // Définit la largeur et la hauteur en fonction de la fenêtre du navigateur
+    width: window.innerWidth,
+    height: window.innerHeight,
     parent: 'game-container',
     physics: {
         default: 'arcade',
@@ -47,8 +48,9 @@ function preload() {
 function create() {
     // Arrière-plan couvrant tout l'écran
     const backgroundImage = this.add.image(0, 0, 'background').setOrigin(0, 0);
-    backgroundImage.displayWidth = config.width;
-    backgroundImage.displayHeight = config.height;
+    // Met à jour la taille de l'image de fond pour qu'elle corresponde à la fenêtre
+    backgroundImage.displayWidth = this.sys.game.config.width;
+    backgroundImage.displayHeight = this.sys.game.config.height;
 
     // Création du groupe de plateformes
     platforms = this.physics.add.staticGroup();
@@ -56,13 +58,6 @@ function create() {
     // La plateforme du sol
     const floor = platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
 
-
-    // Redimensionne la hitbox pour qu'elle corresponde à la partie en herbe de l'image
-    // L'image de base (platform.png) est de 400x32 pixels. La hitbox est redimensionnée à 400x8 pour ne prendre que la partie haute.
-    floor.body.setSize(floor.displayWidth, 8);
-    
-    // Ajuste l'offset pour que la hitbox soit en haut de l'image de la plateforme
-    floor.body.setOffset(0, 24);
     // Création du joueur
     player = this.physics.add.sprite(100, 450, 'dude');
     player.setBounce(0.2);
