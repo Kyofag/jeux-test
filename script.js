@@ -40,8 +40,8 @@ const game = new Phaser.Game(config);
 function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
-    // --- CHANGEMENT TEMPORAIRE POUR LE DÉBOGAGE DU "DUDE" ---
-    this.load.image('dude_temp', 'image/dude.png'); // Charge l'image de 500x500 comme une image normale
+    // --- Retour au chargement de la spritesheet du "dude" ---
+    this.load.spritesheet('dude', 'image/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
 // Fonction de création de la scène
@@ -59,20 +59,38 @@ function create() {
     platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
 
     // Plateforme centrale supérieure (réduite)
-    platforms.create(400, 300, 'platform').setScale(0.75, 0.5).refreshBody();
+    platforms.create(400, 300, 'platform').setScale(0.5, 0.5).refreshBody();
 
     // Plateformes latérales (réduites)
     platforms.create(150, 420, 'platform').setScale(0.5, 0.5).refreshBody();
     platforms.create(650, 420, 'platform').setScale(0.5, 0.5).refreshBody();
 
     // Création du joueur
-    player = this.physics.add.sprite(100, 450, 'dude_temp');
+    player = this.physics.add.sprite(100, 450, 'dude'); // Utilise 'dude' à la bonne taille
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
-    player.setScale(0.1);
-    player.body.setSize(32, 48);
+    // On retire la ligne de scale et de size car le spritesheet est correct
+    // player.setScale(0.1); 
+    // player.body.setSize(32, 48);
 
-    // --- ANIMATIONS DÉSACTIVÉES TEMPORAIREMENT ---
+    // --- Animations du "dude" réactivées ---
+    this.anims.create({
+        key: 'left',
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
+        frameRate: 10,
+        repeat: -1
+    });
+    this.anims.create({
+        key: 'turn',
+        frames: [{ key: 'dude', frame: 3 }],
+        frameRate: 20
+    });
+    this.anims.create({
+        key: 'right',
+        frames: this.anims.generateFrameNumbers('dude', { start: 4, end: 6 }),
+        frameRate: 10,
+        repeat: -1
+    });
 
     // Gestion des collisions avec les plateformes
     this.physics.add.collider(player, platforms);
@@ -98,12 +116,15 @@ function update() {
     // Mouvement du joueur (gauche/droite)
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
+        player.anims.play('left', true);
         player.flipX = true;
     } else if (cursors.right.isDown) {
         player.setVelocityX(160);
+        player.anims.play('right', true);
         player.flipX = false;
     } else {
         player.setVelocityX(0);
+        player.anims.play('turn');
     }
 
     // Saut du joueur
@@ -115,6 +136,7 @@ function update() {
     if (cursors.down.isDown) {
         player.body.setSize(32, 24, true);
         player.body.offset.y = 24;
+        player.anims.play('turn');
     } else {
         player.body.setSize(32, 48, true);
         player.body.offset.y = 0;
@@ -123,12 +145,10 @@ function update() {
     // Système d'attaque plus fiable
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
         isAttacking = true;
-        // Positionne la hitbox devant le joueur
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
         attackHitbox.setVisible(true);
 
-        // Arrête l'attaque après un court délai
         this.time.delayedCall(150, () => {
             isAttacking = false;
             attackHitbox.setVisible(false);
