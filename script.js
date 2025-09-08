@@ -10,7 +10,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-            debug: true // Activé pour voir les zones de collision
+            debug: true
         }
     },
     render: {
@@ -31,6 +31,7 @@ let cursors;
 let deathZone;
 let attackKey;
 let attackHitbox;
+let isAttacking = false; // Nouvelle variable pour gérer l'état d'attaque
 
 // Initialisation du jeu
 const game = new Phaser.Game(config);
@@ -40,9 +41,7 @@ function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
     // --- CHANGEMENT TEMPORAIRE POUR LE DÉBOGAGE DU "DUDE" ---
-    // Nous chargeons 'dude' comme une image simple temporairement.
-    // L'ancienne ligne commentée: this.load.spritesheet('dude', 'image/dude.png', { frameWidth: 32, frameHeight: 48 });
-    this.load.image('dude_temp', 'image/dude.png'); // Charge l'image de 500x500 comme une image normale
+    this.load.image('dude_temp', 'image/dude.png');
 }
 
 // Fonction de création de la scène
@@ -56,44 +55,19 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // Agencement "Champ de Bataille"
-    // Le sol principal
     platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
-
-    // Plateforme centrale supérieure
     platforms.create(400, 300, 'platform').setScale(1.5, 1).refreshBody();
-
-    // Plateformes latérales (gauche et droite)
     platforms.create(150, 420, 'platform').setScale(1, 1).refreshBody();
     platforms.create(650, 420, 'platform').setScale(1, 1).refreshBody();
 
     // Création du joueur - UTILISE LE FICHIER TEMPORAIRE
-    player = this.physics.add.sprite(100, 450, 'dude_temp'); // Utilise 'dude_temp' pour l'affichage
+    player = this.physics.add.sprite(100, 450, 'dude_temp');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
-    player.setScale(0.1); // Réduit la taille pour que l'image de 500x500 ne soit pas gigantesque
-    player.body.setSize(32, 48); // Force la hitbox à être de la bonne taille
+    player.setScale(0.1);
+    player.body.setSize(32, 48);
 
     // --- ANIMATIONS DÉSACTIVÉES TEMPORAIREMENT ---
-    // Commenté car 'dude_temp' n'est pas une spritesheet
-    /*
-    this.anims.create({
-        key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
-        frameRate: 10,
-        repeat: -1
-    });
-    this.anims.create({
-        key: 'turn',
-        frames: [{ key: 'dude', frame: 3 }],
-        frameRate: 20
-    });
-    this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 4, end: 6 }),
-        frameRate: 10,
-        repeat: -1
-    });
-    */
 
     // Gestion des collisions avec les plateformes
     this.physics.add.collider(player, platforms);
@@ -119,15 +93,12 @@ function update() {
     // Mouvement du joueur (gauche/droite)
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
-        // player.anims.play('left', true); // Animations désactivées
         player.flipX = true;
     } else if (cursors.right.isDown) {
         player.setVelocityX(160);
-        // player.anims.play('right', true); // Animations désactivées
         player.flipX = false;
     } else {
         player.setVelocityX(0);
-        // player.anims.play('turn'); // Animations désactivées
     }
 
     // Saut du joueur
@@ -139,21 +110,31 @@ function update() {
     if (cursors.down.isDown) {
         player.body.setSize(32, 24, true);
         player.body.offset.y = 24;
-        // player.anims.play('turn'); // Animations désactivées
     } else {
         player.body.setSize(32, 48, true);
         player.body.offset.y = 0;
     }
 
-    // Attaque de base
+    // --- MISE À JOUR : SYSTÈME D'ATTAQUE PLUS FIABLE ---
+    // Si la touche d'attaque est enfoncée (une seule fois)
     if (Phaser.Input.Keyboard.JustDown(attackKey)) {
+        isAttacking = true;
+        // Positionne la hitbox devant le joueur
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
         attackHitbox.setVisible(true);
 
-        this.time.delayedCall(100, () => {
+        // Arrête l'attaque après un court délai
+        this.time.delayedCall(150, () => {
+            isAttacking = false;
             attackHitbox.setVisible(false);
         });
+    }
+
+    // Positionne la hitbox pour qu'elle suive le joueur pendant l'attaque
+    if (isAttacking) {
+        attackHitbox.x = player.x + (player.flipX ? -20 : 20);
+        attackHitbox.y = player.y;
     }
 }
 
