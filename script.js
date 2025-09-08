@@ -54,17 +54,14 @@ function create() {
     platforms = this.physics.add.staticGroup();
 
     // La plateforme du sol
-    const floor = platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody(); // image à taille normale
+    const floor = platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
 
-    // --- MISE À JOUR : Hitbox fine pour la plateforme ---
-    const originalPlatformHeight = floor.body.height / floor.scaleY; // Hauteur de l'image de base (sans scale)
-    const scaledPlatformWidth = floor.displayWidth;
-    const thinHitboxHeight = originalPlatformHeight / 4; // Hitbox 4 fois plus fine
-
-    // Définit la taille et la position de la hitbox
-    floor.body.setSize(scaledPlatformWidth, thinHitboxHeight);
+    // Redimensionne la hitbox pour qu'elle corresponde à la partie en herbe de l'image
+    // L'image de base (platform.png) est de 400x32 pixels. La hitbox est redimensionnée à 400x8 pour ne prendre que la partie haute.
+    floor.body.setSize(floor.displayWidth, 8);
+    
     // Ajuste l'offset pour que la hitbox soit en haut de l'image de la plateforme
-    floor.body.setOffset(0, originalPlatformHeight - thinHitboxHeight);
+    floor.body.setOffset(0, 24);
 
     // Création du joueur
     player = this.physics.add.sprite(100, 450, 'dude');
