@@ -40,7 +40,6 @@ const game = new Phaser.Game(config);
 function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
-    // --- Retour au chargement de la spritesheet du "dude" ---
     this.load.spritesheet('dude', 'image/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
@@ -54,26 +53,16 @@ function create() {
     // Création du groupe de plateformes
     platforms = this.physics.add.staticGroup();
 
-    // Agencement "Champ de Bataille"
+    // Agencement simplifié
     // Le sol principal
     platforms.create(400, 568, 'platform').setScale(4, 1).refreshBody();
 
-    // Plateforme centrale supérieure (réduite)
-    platforms.create(400, 300, 'platform').setScale(0.5, 0.5).refreshBody();
-
-    // Plateformes latérales (réduites)
-    platforms.create(150, 420, 'platform').setScale(0.5, 0.5).refreshBody();
-    platforms.create(650, 420, 'platform').setScale(0.5, 0.5).refreshBody();
-
     // Création du joueur
-    player = this.physics.add.sprite(100, 450, 'dude'); // Utilise 'dude' à la bonne taille
+    player = this.physics.add.sprite(100, 450, 'dude');
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
-    // On retire la ligne de scale et de size car le spritesheet est correct
-    // player.setScale(0.1); 
-    // player.body.setSize(32, 48);
 
-    // --- Animations du "dude" réactivées ---
+    // Animations du "dude"
     this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
@@ -92,7 +81,7 @@ function create() {
         repeat: -1
     });
 
-    // Gestion des collisions avec les plateformes
+    // Gestion des collisions avec la plateforme
     this.physics.add.collider(player, platforms);
 
     // Création de la zone de mort
