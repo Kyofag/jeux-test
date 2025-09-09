@@ -146,7 +146,7 @@ function update() {
 
     // Réinitialise le nombre de sauts quand le joueur touche le sol
     if (player.body.touching.down) {
-        jumpCount = 3;
+        jumpCount = 5;
     }
 
     // Saut du joueur
