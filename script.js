@@ -41,7 +41,6 @@ const game = new Phaser.Game(config);
 function preload() {
     this.load.image('background', 'image/background.png');
     this.load.image('platform', 'image/platform.png');
-    // Chargement de la feuille d'assets avec le nouveau nom de fichier
     this.load.spritesheet('player_sprite', 'image/asset1.png', { frameWidth: 32, frameHeight: 32 });
 }
 
@@ -57,8 +56,8 @@ function create() {
 
     // La plateforme du sol
     const floor = platforms.create(
-        this.sys.game.config.width / 2, 
-        this.sys.game.config.height - 32, 
+        this.sys.game.config.width / 2,
+        this.sys.game.config.height - 32,
         'platform'
     ).setScale(this.sys.game.config.width / 200, 1).refreshBody();
 
@@ -70,36 +69,36 @@ function create() {
     // Définition des animations basées sur la feuille d'assets
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('player_sprite', { start: 0, end: 2 }), // Exemple de frames
+        frames: this.anims.generateFrameNumbers('player_sprite', { start: 0, end: 2 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
         key: 'turn',
-        frames: [{ key: 'player_sprite', frame: 3 }], // Exemple de frame
+        frames: [{ key: 'player_sprite', frame: 3 }],
         frameRate: 20
     });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('player_sprite', { start: 4, end: 6 }), // Exemple de frames
+        frames: this.anims.generateFrameNumbers('player_sprite', { start: 4, end: 6 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
         key: 'jump',
-        frames: [{ key: 'player_sprite', frame: 7 }], // Exemple de frame de saut
+        frames: [{ key: 'player_sprite', frame: 7 }],
         frameRate: 10
     });
 
     // Animation de coup de poing
     this.anims.create({
         key: 'punch1',
-        frames: this.anims.generateFrameNumbers('player_sprite', { start: 8, end: 12 }), // Frames de punch
+        frames: this.anims.generateFrameNumbers('player_sprite', { start: 8, end: 12 }),
         frameRate: 15,
-        repeat: 0 // Joue une seule fois
+        repeat: 0
     });
 
     // Ajustement de la hitbox du joueur
@@ -108,11 +107,6 @@ function create() {
 
     // Gestion des collisions avec la plateforme
     this.physics.add.collider(player, platforms);
-
-    // Création de la zone de mort
-    deathZone = this.add.rectangle(400, 700, 800, 200);
-    this.physics.add.existing(deathZone, true);
-    this.physics.add.overlap(player, deathZone, onPlayerDeath, null, this);
 
     // Initialisation des contrôles du clavier
     cursors = this.input.keyboard.createCursorKeys();
@@ -131,7 +125,7 @@ function update() {
     // Si le joueur est en train d'attaquer, il ne peut pas bouger
     if (isAttacking) {
         player.setVelocityX(0);
-        return; // Sort de la fonction pour ne pas exécuter le reste de la logique de mouvement
+        return;
     }
 
     // Mouvement du joueur (gauche/droite)
@@ -176,34 +170,22 @@ function update() {
         isAttacking = true;
         player.anims.play('punch1', true);
 
-        // Détecte la fin de l'animation de punch
         player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             isAttacking = false;
             player.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
         });
 
-        // Positionne la hitbox d'attaque
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
         attackHitbox.setVisible(true);
 
-        this.time.delayedCall(300, () => { // Cache la hitbox après 300 ms
+        this.time.delayedCall(300, () => {
             attackHitbox.setVisible(false);
         });
     }
 
-    // Met à jour la position de la hitbox si une attaque est en cours
     if (isAttacking) {
         attackHitbox.x = player.x + (player.flipX ? -20 : 20);
         attackHitbox.y = player.y;
     }
-}
-
-// Fonction de mort du joueur
-function onPlayerDeath(player, deathZone) {
-    console.log("Le joueur est tombé dans le vide !");
-    player.setX(100);
-    player.setY(450);
-    player.setVelocity(0, 0);
-    jumpCount = 2;
 }
