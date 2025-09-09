@@ -146,12 +146,12 @@ function update() {
 
     // Réinitialise le nombre de sauts quand le joueur touche le sol
     if (player.body.touching.down) {
-        jumpCount = 2;
+        jumpCount = 3;
     }
 
     // Saut du joueur
     if (Phaser.Input.Keyboard.JustDown(jumpKey) && jumpCount > 0) {
-        player.setVelocityY(-330);
+        player.setVelocityY(-500);
         jumpCount--;
         player.anims.play('jump');
     }
