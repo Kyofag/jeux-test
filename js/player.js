@@ -1,23 +1,29 @@
-// Définition de la classe Player
+// La classe Player gère toutes les propriétés et les actions du personnage.
 class Player {
     constructor(scene) {
         this.scene = scene;
-        this.player = this.scene.physics.add.sprite(100, 450, 'player_sprite');
-        this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
+        // Crée le sprite du joueur et le rend physique (gravité, collision).
+        this.sprite = this.scene.physics.add.sprite(100, 450, 'player_sprite');
+        this.sprite.setBounce(0.2); // Donne un léger rebond au joueur.
+        this.sprite.setCollideWorldBounds(true); // Le joueur ne peut pas sortir de l'écran.
 
+        // Initialise les variables d'état du joueur.
         this.jumpCount = 0;
         this.isAttacking = false;
+
+        // Crée la zone de collision pour l'attaque (initialement invisible et sans gravité).
         this.attackHitbox = this.scene.add.rectangle(0, 0, 40, 40);
         this.scene.physics.add.existing(this.attackHitbox);
         this.attackHitbox.body.allowGravity = false;
         this.attackHitbox.setVisible(false);
 
+        // Appelle les fonctions pour créer les animations, la hitbox et les contrôles.
         this.createAnimations();
         this.setHitbox();
         this.setControls();
     }
 
+    // Crée les animations du personnage.
     createAnimations() {
         this.scene.anims.create({
             key: 'left',
@@ -25,26 +31,22 @@ class Player {
             frameRate: 10,
             repeat: -1
         });
-
         this.scene.anims.create({
             key: 'turn',
             frames: [{ key: 'player_sprite', frame: 3 }],
             frameRate: 20
         });
-
         this.scene.anims.create({
             key: 'right',
             frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 4, end: 6 }),
             frameRate: 10,
             repeat: -1
         });
-
         this.scene.anims.create({
             key: 'jump',
             frames: [{ key: 'player_sprite', frame: 7 }],
             frameRate: 10
         });
-
         this.scene.anims.create({
             key: 'punch1',
             frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 8, end: 12 }),
@@ -53,86 +55,86 @@ class Player {
         });
     }
 
+    // Définit la taille et la position de la hitbox du joueur.
     setHitbox() {
-        // La hitbox de base du joueur
-        this.player.body.setSize(18, 28);
-        this.player.body.setOffset(7, 4);
+        this.sprite.body.setSize(18, 28);
+        this.sprite.body.setOffset(7, 4);
     }
 
+    // Configure les touches de contrôle.
     setControls() {
         this.cursors = this.scene.input.keyboard.createCursorKeys();
         this.jumpKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.attackKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
     }
 
+    // La logique de mise à jour, appelée à chaque image du jeu.
     update() {
-        // Logique de mouvement et d'attaque
+        // Le joueur ne peut pas bouger s'il est en train d'attaquer.
         if (this.isAttacking) {
-            this.player.setVelocityX(0);
+            this.sprite.setVelocityX(0);
             return;
         }
 
-        // Accroupissement (prioritaire sur le mouvement)
+        // Gère l'accroupissement.
         if (this.cursors.down.isDown) {
-            this.player.setVelocityX(0);
-            this.player.anims.play('turn'); // Remplacez par une animation d'accroupissement si vous en avez une
-            // Ajuste la hitbox pour l'accroupissement
-            this.player.body.setSize(18, 18);
-            this.player.body.setOffset(7, 14);
-            return; // Le joueur ne bouge pas
+            this.sprite.setVelocityX(0);
+            this.sprite.anims.play('turn'); // Remplacez par une animation d'accroupissement si vous en avez une.
+            this.sprite.body.setSize(18, 18);
+            this.sprite.body.setOffset(7, 14);
+            return;
         } else {
-            // Rétablit la hitbox normale si le joueur ne s'accroupit pas
-            this.setHitbox();
+            this.setHitbox(); // Rétablit la hitbox normale.
         }
 
-        // Mouvement latéral
+        // Gère le mouvement horizontal (gauche et droite).
         if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-160);
-            this.player.anims.play('left', true);
-            this.player.flipX = true;
+            this.sprite.setVelocityX(-160);
+            this.sprite.anims.play('left', true);
+            this.sprite.flipX = true; // Inverse l'image pour qu'il regarde à gauche.
         } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(160);
-            this.player.anims.play('right', true);
-            this.player.flipX = false;
+            this.sprite.setVelocityX(160);
+            this.sprite.anims.play('right', true);
+            this.sprite.flipX = false;
         } else {
-            this.player.setVelocityX(0);
-            if (this.player.body.touching.down) {
-                this.player.anims.play('turn');
+            this.sprite.setVelocityX(0);
+            if (this.sprite.body.touching.down) {
+                this.sprite.anims.play('turn');
             }
         }
 
-        // Réinitialise le nombre de sauts quand le joueur touche le sol
-        if (this.player.body.touching.down) {
-            this.jumpCount = 2;
+        // Gère le double saut.
+        if (this.sprite.body.touching.down) {
+            this.jumpCount = 2; // Réinitialise les sauts lorsque le joueur touche le sol.
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.jumpKey) && this.jumpCount > 0) {
+            this.sprite.setVelocityY(-330);
+            this.jumpCount--;
+            this.sprite.anims.play('jump');
         }
 
-        // Saut
-        if (Phaser.Input.Keyboard.JustDown(this.jumpKey) && this.jumpCount > 0) {
-            this.player.setVelocityY(-330);
-            this.jumpCount--;
-            this.player.anims.play('jump');
-        }
-        
-        // Attaque
+        // Gère l'attaque.
         if (Phaser.Input.Keyboard.JustDown(this.attackKey) && !this.isAttacking) {
             this.isAttacking = true;
-            this.player.anims.play('punch1', true);
-            this.player.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.sprite.anims.play('punch1', true);
+            // Événement déclenché à la fin de l'animation d'attaque.
+            this.sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 this.isAttacking = false;
-                this.player.off(Phaser.Animations.Events.ANIMATION_COMPLETE);
             });
-            this.attackHitbox.x = this.player.x + (this.player.flipX ? -20 : 20);
-            this.attackHitbox.y = this.player.y;
+            // Positionne et active la hitbox d'attaque.
+            this.attackHitbox.x = this.sprite.x + (this.sprite.flipX ? -20 : 20);
+            this.attackHitbox.y = this.sprite.y;
             this.attackHitbox.setVisible(true);
+            // Désactive la hitbox d'attaque après 300ms.
             this.scene.time.delayedCall(300, () => {
                 this.attackHitbox.setVisible(false);
             });
         }
-        
-        // Met à jour la position de la hitbox si une attaque est en cours
+
+        // Maintient la hitbox d'attaque près du joueur pendant l'attaque.
         if (this.isAttacking) {
-            this.attackHitbox.x = this.player.x + (this.player.flipX ? -20 : 20);
-            this.attackHitbox.y = this.player.y;
+            this.attackHitbox.x = this.sprite.x + (this.sprite.flipX ? -20 : 20);
+            this.attackHitbox.y = this.sprite.y;
         }
     }
 }
