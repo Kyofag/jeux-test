@@ -1,8 +1,8 @@
-// La classe Arena est responsable de la création du niveau et des plateformes.
+// La classe Arena est responsable de la création des plateformes.
 class Arena {
     constructor(scene) {
         this.scene = scene;
-        // Crée un groupe statique pour les plateformes, optimisé pour les objets qui ne bougent pas.
+        // Crée un groupe statique pour les plateformes (optimisé pour les objets immobiles).
         this.platforms = this.scene.physics.add.staticGroup();
         this.createPlatforms();
     }
@@ -15,7 +15,7 @@ class Arena {
             this.scene.sys.game.config.height - 32, // Position Y en bas
             'platform'
         ).setScale(this.scene.sys.game.config.width / 200, 1) // Étend la plateforme horizontalement.
-          .refreshBody(); // Met à jour le corps physique après avoir modifié l'échelle.
+          .refreshBody(); // Met à jour le corps physique après avoir changé l'échelle.
     }
 
     // Retourne le groupe de plateformes pour que d'autres objets puissent interagir avec.
