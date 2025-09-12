@@ -5,7 +5,7 @@ class GameScene extends Phaser.Scene {
         this.player1 = null;
         this.player2 = null;
         this.arena = null;
-        this.gameOver = false; // Variable pour vérifier si le jeu est terminé.
+        this.gameOver = false;
     }
 
     preload() {
@@ -16,6 +16,9 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Réinitialise la scène à chaque lancement.
+        this.resetGame();
+
         // Crée l'arrière-plan.
         this.add.image(0, 0, 'background').setOrigin(0, 0).setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
         
@@ -33,7 +36,7 @@ class GameScene extends Phaser.Scene {
         this.player1.createHealthBar(50, 20);
         this.player2.createHealthBar(this.sys.game.config.width - 250, 20);
 
-        // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs pour infliger des dégâts.
+        // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs.
         this.physics.add.overlap(this.player1.attackHitbox, this.player2.sprite, () => {
             if (this.player1.isAttacking) {
                 this.player2.takeDamage();
@@ -71,12 +74,32 @@ class GameScene extends Phaser.Scene {
         });
     }
 
+    // Ajout d'une nouvelle méthode pour réinitialiser le jeu.
+    resetGame() {
+        this.gameOver = false;
+
+        // Si les joueurs existent déjà (si la scène a déjà été lancée), on les détruit.
+        if (this.player1) {
+            this.player1.sprite.destroy();
+            this.player1.healthBar.destroy();
+            this.player1.attackHitbox.destroy();
+        }
+        if (this.player2) {
+            this.player2.sprite.destroy();
+            this.player2.healthBar.destroy();
+            this.player2.attackHitbox.destroy();
+        }
+        // On détruit aussi les éléments de l'arène s'ils existent.
+        if (this.arena) {
+            this.arena.platforms.clear(true, true);
+        }
+    }
+
     update() {
         if (this.gameOver) {
             return;
         }
 
-        // Met à jour la logique des deux joueurs à chaque image.
         if (this.player1) {
             this.player1.update();
         }
@@ -84,7 +107,6 @@ class GameScene extends Phaser.Scene {
             this.player2.update();
         }
 
-        // Vérifie si un joueur est mort.
         if (this.player1.hp <= 0 && !this.gameOver) {
             this.endGame('Joueur 2 a gagné !');
         } else if (this.player2.hp <= 0 && !this.gameOver) {
@@ -97,7 +119,6 @@ class GameScene extends Phaser.Scene {
         this.gameOverText.setText(winnerText).setVisible(true);
         this.backToMenuButton.setVisible(true);
 
-        // Arrête les mouvements des joueurs
         this.player1.sprite.setVelocity(0);
         this.player2.sprite.setVelocity(0);
         this.player1.sprite.body.enable = false;
