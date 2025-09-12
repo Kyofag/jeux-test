@@ -13,7 +13,7 @@ class MenuScene extends Phaser.Scene {
         this.loadControls();
 
         // Crée le titre du jeu.
-        this.titleText = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 3, 'Mon Super Jeu', {
+        this.titleText = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 3, 'Jeu test', {
             fontSize: '64px',
             fill: '#fff',
             fontFamily: 'Arial Black'
