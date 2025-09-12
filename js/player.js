@@ -22,7 +22,7 @@ class Player {
         // Initialise les variables de jeu.
         this.jumpCount = 0;
         this.isAttacking = false;
-        this.hp = 100; // Points de vie.
+        this.hp = 7000; // Nouveaux points de vie.
         this.healthBar = null;
 
         // Crée la zone de collision pour l'attaque (initialement invisible et sans gravité).
@@ -102,13 +102,14 @@ class Player {
         this.healthBar.fillRect(x + 2, y + 2, 200, 20);
         if (this.hp > 0) {
             this.healthBar.fillStyle(0x00ff00, 1); // Barre verte (vie restante)
-            this.healthBar.fillRect(x + 2, y + 2, this.hp * 2, 20);
+            // La barre de vie se met à l'échelle de 200px (valeur max)
+            this.healthBar.fillRect(x + 2, y + 2, (this.hp / 7000) * 200, 20);
         }
     }
 
     // Gère la perte de points de vie.
     takeDamage() {
-        this.hp -= 10;
+        this.hp -= 100; // Dégâts de 100
         if (this.hp < 0) this.hp = 0;
         if (this.healthBar) {
             this.drawHealthBar(this.healthBar.x, this.healthBar.y);
@@ -182,7 +183,8 @@ class Player {
             this.attackHitbox.x = this.sprite.x + (this.sprite.flipX ? -20 : 20);
             this.attackHitbox.y = this.sprite.y;
             this.attackHitbox.setVisible(true);
-            this.scene.time.delayedCall(300, () => {
+            // La hitbox disparaît après 1000ms (1 seconde).
+            this.scene.time.delayedCall(1000, () => {
                 this.attackHitbox.setVisible(false);
             });
         }
