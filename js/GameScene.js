@@ -6,6 +6,9 @@ class GameScene extends Phaser.Scene {
         this.player2 = null;
         this.arena = null;
         this.gameOver = false;
+        // Ajout de deux variables pour contrôler le délai de dégâts
+        this.canDamageP1 = true;
+        this.canDamageP2 = true;
     }
 
     preload() {
@@ -36,15 +39,24 @@ class GameScene extends Phaser.Scene {
         this.player1.createHealthBar(50, 20);
         this.player2.createHealthBar(this.sys.game.config.width - 250, 20);
 
-        // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs.
+        // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs pour infliger des dégâts.
         this.physics.add.overlap(this.player1.attackHitbox, this.player2.sprite, () => {
-            if (this.player1.isAttacking) {
+            // On vérifie que la hitbox est active ET que les dégâts peuvent être infligés
+            if (this.player1.attackHitbox.body.enable && this.canDamageP1) {
                 this.player2.takeDamage();
+                this.canDamageP1 = false; // On désactive les dégâts pour le joueur 1
+                // On réactive les dégâts après un court délai (par exemple 500ms)
+                this.time.delayedCall(500, () => { this.canDamageP1 = true; });
             }
         });
+
         this.physics.add.overlap(this.player2.attackHitbox, this.player1.sprite, () => {
-            if (this.player2.isAttacking) {
+            // On vérifie que la hitbox est active ET que les dégâts peuvent être infligés
+            if (this.player2.attackHitbox.body.enable && this.canDamageP2) {
                 this.player1.takeDamage();
+                this.canDamageP2 = false; // On désactive les dégâts pour le joueur 2
+                // On réactive les dégâts après un court délai (par exemple 500ms)
+                this.time.delayedCall(500, () => { this.canDamageP2 = true; });
             }
         });
 
@@ -74,11 +86,12 @@ class GameScene extends Phaser.Scene {
         });
     }
 
-    // Ajout d'une nouvelle méthode pour réinitialiser le jeu.
     resetGame() {
         this.gameOver = false;
+        // On réinitialise les variables de dégâts
+        this.canDamageP1 = true;
+        this.canDamageP2 = true;
 
-        // Si les joueurs existent déjà (si la scène a déjà été lancée), on les détruit.
         if (this.player1) {
             this.player1.sprite.destroy();
             this.player1.healthBar.destroy();
@@ -89,7 +102,6 @@ class GameScene extends Phaser.Scene {
             this.player2.healthBar.destroy();
             this.player2.attackHitbox.destroy();
         }
-        // On détruit aussi les éléments de l'arène s'ils existent.
         if (this.arena) {
             this.arena.platforms.clear(true, true);
         }
