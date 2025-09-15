@@ -29,52 +29,46 @@ class Player {
         this.attackHitbox.body.enable = false;
 
         this.createAnimations();
-        this.setHitbox();
+        this.setHitbox(); // La fonction corrigée est appelée ici
         this.setControls();
     }
 
     createAnimations() {
+        // Animation de marche pour les deux directions
+        this.scene.anims.create({
+            key: 'walk',
+            frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 0, end: 5 }), // Utilise les 6 premières frames
+            frameRate: 10,
+            repeat: -1
+        });
+
         // Le code de l'animation 'turn' pour l'état d'inactivité
         this.scene.anims.create({
             key: 'turn',
             frames: [{ key: 'player_sprite', frame: 0 }],
             frameRate: 20
         });
-
-        // Les animations de mouvement 'left' et 'right'
-        // Nous allons utiliser les frames du PUNCH 1 pour la marche
-        this.scene.anims.create({
-            key: 'left',
-            frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 0, end: 2 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.scene.anims.create({
-            key: 'right',
-            frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 0, end: 2 }),
-            frameRate: 10,
-            repeat: -1
-        });
         
         // Animation de saut
         this.scene.anims.create({
             key: 'jump',
-            frames: [{ key: 'player_sprite', frame: 7 }], // Le saut est la 8ème image
+            frames: [{ key: 'player_sprite', frame: 6 }],
             frameRate: 10
         });
 
         // Animation de coup de poing
         this.scene.anims.create({
             key: 'punch1',
-            frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 0, end: 4 }), // PUNCH 1
+            frames: this.scene.anims.generateFrameNumbers('player_sprite', { start: 7, end: 11 }),
             frameRate: 15,
             repeat: 0
         });
     }
 
+    // Fonction corrigée
     setHitbox() {
-        this.sprite.body.setSize(18, 28);
-        this.sprite.body.setOffset(7, 4);
+        this.sprite.body.setSize(20, 32); // Taille du corps physique
+        this.sprite.body.setOffset(6, 0); // Décalage pour aligner le corps sur le sprite
     }
 
     setControls() {
@@ -132,8 +126,8 @@ class Player {
         if (this.downKey.isDown) {
             this.sprite.setVelocityX(0);
             this.sprite.anims.play('turn');
-            this.sprite.body.setSize(18, 18);
-            this.sprite.body.setOffset(7, 14);
+            this.sprite.body.setSize(20, 16);
+            this.sprite.body.setOffset(6, 16);
             return;
         } else {
             this.setHitbox();
@@ -141,11 +135,11 @@ class Player {
 
         if (this.leftKey.isDown) {
             this.sprite.setVelocityX(-160);
-            this.sprite.anims.play('left', true);
+            this.sprite.anims.play('walk', true);
             this.sprite.flipX = true;
         } else if (this.rightKey.isDown) {
             this.sprite.setVelocityX(160);
-            this.sprite.anims.play('right', true);
+            this.sprite.anims.play('walk', true);
             this.sprite.flipX = false;
         } else {
             this.sprite.setVelocityX(0);
