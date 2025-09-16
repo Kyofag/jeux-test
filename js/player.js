@@ -17,6 +17,9 @@ class Player {
         this.sprite.setCollideWorldBounds(true);
         this.sprite.setTint(startColor);
 
+        // Code ajouté pour doubler la taille du personnage
+        this.sprite.setScale(2);
+
         this.jumpCount = 0;
         this.isAttacking = false;
         this.hp = 7000;
@@ -27,12 +30,6 @@ class Player {
         this.attackHitbox.body.allowGravity = false;
         this.attackHitbox.setVisible(false);
         this.attackHitbox.body.enable = false;
-        
-        // Code pour la hitbox de débogage (à retirer plus tard)
-        this.debugHitbox = this.scene.add.graphics();
-        this.debugHitbox.fillStyle(0x000000, 0.5); // Couleur noire semi-transparente
-        this.debugHitbox.fillRect(0, 0, 1, 1);
-        // Fin du code de débogage
 
         this.createAnimations();
         this.setHitbox();
@@ -94,9 +91,10 @@ class Player {
         });
     }
 
+    // Hitbox mise à jour avec des valeurs doublées
     setHitbox() {
-        this.sprite.body.setSize(16, 28);
-        this.sprite.body.setOffset(8, 4);
+        this.sprite.body.setSize(32, 56);
+        this.sprite.body.setOffset(16, 8);
     }
 
     setControls() {
@@ -154,8 +152,8 @@ class Player {
         if (this.downKey.isDown) {
             this.sprite.setVelocityX(0);
             this.sprite.anims.play('turn');
-            this.sprite.body.setSize(18, 18);
-            this.sprite.body.setOffset(7, 14);
+            this.sprite.body.setSize(36, 36);
+            this.sprite.body.setOffset(14, 28);
             return;
         } else {
             this.setHitbox();
@@ -207,15 +205,5 @@ class Player {
             this.attackHitbox.x = this.sprite.x + (this.sprite.flipX ? -20 : 20);
             this.attackHitbox.y = this.sprite.y;
         }
-        
-        // Code de débogage de la hitbox (à retirer plus tard)
-        this.debugHitbox.clear();
-        this.debugHitbox.fillStyle(0x000000, 0.5);
-        this.debugHitbox.fillRect(
-            this.sprite.body.x,
-            this.sprite.body.y,
-            this.sprite.body.width,
-            this.sprite.body.height
-        );
     }
 }
