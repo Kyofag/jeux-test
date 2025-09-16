@@ -27,6 +27,12 @@ class Player {
         this.attackHitbox.body.allowGravity = false;
         this.attackHitbox.setVisible(false);
         this.attackHitbox.body.enable = false;
+        
+        // Code pour la hitbox de débogage (à retirer plus tard)
+        this.debugHitbox = this.scene.add.graphics();
+        this.debugHitbox.fillStyle(0x000000, 0.5); // Couleur noire semi-transparente
+        this.debugHitbox.fillRect(0, 0, 1, 1);
+        // Fin du code de débogage
 
         this.createAnimations();
         this.setHitbox();
@@ -34,7 +40,6 @@ class Player {
     }
 
     createAnimations() {
-        // Animation de marche
         this.scene.anims.create({
             key: 'left',
             frames: [
@@ -58,7 +63,6 @@ class Player {
             repeat: -1
         });
 
-        // Animation de repos
         this.scene.anims.create({
             key: 'turn',
             frames: [
@@ -71,16 +75,12 @@ class Player {
             repeat: -1
         });
         
-        // Animation de saut
         this.scene.anims.create({
             key: 'jump',
             frames: [{ key: 'player_sprite', frame: 'princess_walk_2' }],
             frameRate: 10
         });
 
-        // Comme il n'y a pas d'animation d'attaque dans votre atlas "princesse",
-        // je vais simuler une animation de coup de poing avec les frames de marche.
-        // Si vous avez un atlas avec une animation d'attaque, vous devrez remplacer les frames ici.
         this.scene.anims.create({
             key: 'punch1',
             frames: [
@@ -95,8 +95,8 @@ class Player {
     }
 
     setHitbox() {
-        this.sprite.body.setSize(14, 28);
-        this.sprite.body.setOffset(9, 4);
+        this.sprite.body.setSize(16, 28);
+        this.sprite.body.setOffset(8, 4);
     }
 
     setControls() {
@@ -207,5 +207,15 @@ class Player {
             this.attackHitbox.x = this.sprite.x + (this.sprite.flipX ? -20 : 20);
             this.attackHitbox.y = this.sprite.y;
         }
+        
+        // Code de débogage de la hitbox (à retirer plus tard)
+        this.debugHitbox.clear();
+        this.debugHitbox.fillStyle(0x000000, 0.5);
+        this.debugHitbox.fillRect(
+            this.sprite.body.x,
+            this.sprite.body.y,
+            this.sprite.body.width,
+            this.sprite.body.height
+        );
     }
 }
