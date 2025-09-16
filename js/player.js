@@ -22,7 +22,7 @@ class Player {
 
         this.jumpCount = 0;
         this.isAttacking = false;
-        this.hp = 7000;
+        this.hp = 1500;
         this.healthBar = null;
 
         this.attackHitbox = this.scene.add.rectangle(0, 0, 40, 40);
