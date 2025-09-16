@@ -12,7 +12,6 @@ class GameScene extends Phaser.Scene {
     preload() {
         this.load.image('background', 'image/background.png');
         this.load.image('platform', 'image/platform.png');
-        // On charge l'atlas de sprites avec le bon nom de fichier.
         this.load.atlas('player_sprite', 'image/test.png', 'test_atlas.json');
     }
 
