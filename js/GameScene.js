@@ -5,8 +5,7 @@ class GameScene extends Phaser.Scene {
         this.player1 = null;
         this.player2 = null;
         this.arena = null;
-        this.gameOver = false;
-        // Ajout de deux variables pour contrôler le délai de dégâts
+        this.gameOver = false; // Variable pour vérifier si le jeu est terminé.
         this.canDamageP1 = true;
         this.canDamageP2 = true;
     }
@@ -19,7 +18,6 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        // Réinitialise la scène à chaque lancement.
         this.resetGame();
 
         // Crée l'arrière-plan.
@@ -41,21 +39,16 @@ class GameScene extends Phaser.Scene {
 
         // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs pour infliger des dégâts.
         this.physics.add.overlap(this.player1.attackHitbox, this.player2.sprite, () => {
-            // On vérifie que la hitbox est active ET que les dégâts peuvent être infligés
             if (this.player1.attackHitbox.body.enable && this.canDamageP1) {
                 this.player2.takeDamage();
-                this.canDamageP1 = false; // On désactive les dégâts pour le joueur 1
-                // On réactive les dégâts après un court délai (par exemple 500ms)
+                this.canDamageP1 = false;
                 this.time.delayedCall(500, () => { this.canDamageP1 = true; });
             }
         });
-
         this.physics.add.overlap(this.player2.attackHitbox, this.player1.sprite, () => {
-            // On vérifie que la hitbox est active ET que les dégâts peuvent être infligés
             if (this.player2.attackHitbox.body.enable && this.canDamageP2) {
                 this.player1.takeDamage();
-                this.canDamageP2 = false; // On désactive les dégâts pour le joueur 2
-                // On réactive les dégâts après un court délai (par exemple 500ms)
+                this.canDamageP2 = false;
                 this.time.delayedCall(500, () => { this.canDamageP2 = true; });
             }
         });
@@ -88,7 +81,6 @@ class GameScene extends Phaser.Scene {
 
     resetGame() {
         this.gameOver = false;
-        // On réinitialise les variables de dégâts
         this.canDamageP1 = true;
         this.canDamageP2 = true;
 
@@ -112,6 +104,7 @@ class GameScene extends Phaser.Scene {
             return;
         }
 
+        // Met à jour la logique des deux joueurs à chaque image.
         if (this.player1) {
             this.player1.update();
         }
@@ -119,6 +112,7 @@ class GameScene extends Phaser.Scene {
             this.player2.update();
         }
 
+        // Vérifie si un joueur est mort.
         if (this.player1.hp <= 0 && !this.gameOver) {
             this.endGame('Joueur 2 a gagné !');
         } else if (this.player2.hp <= 0 && !this.gameOver) {
@@ -131,6 +125,7 @@ class GameScene extends Phaser.Scene {
         this.gameOverText.setText(winnerText).setVisible(true);
         this.backToMenuButton.setVisible(true);
 
+        // Arrête les mouvements des joueurs
         this.player1.sprite.setVelocity(0);
         this.player2.sprite.setVelocity(0);
         this.player1.sprite.body.enable = false;
