@@ -17,7 +17,7 @@ class Player {
         this.sprite.setCollideWorldBounds(true);
         this.sprite.setTint(startColor);
 
-        // Code ajouté pour doubler la taille du personnage
+        // Code pour doubler la taille du personnage
         this.sprite.setScale(2);
 
         this.jumpCount = 0;
@@ -91,7 +91,6 @@ class Player {
         });
     }
 
-    // Hitbox mise à jour avec des valeurs doublées
     setHitbox() {
         this.sprite.body.setSize(32, 56);
         this.sprite.body.setOffset(16, 8);
@@ -177,8 +176,9 @@ class Player {
         if (this.sprite.body.touching.down) {
             this.jumpCount = 2;
         }
+        // Valeur de saut doublée pour correspondre à la taille du personnage.
         if (Phaser.Input.Keyboard.JustDown(this.jumpKey) && this.jumpCount > 0) {
-            this.sprite.setVelocityY(-330);
+            this.sprite.setVelocityY(-660); // Doublé de -330 à -660
             this.jumpCount--;
             this.sprite.anims.play('jump');
         }
