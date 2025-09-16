@@ -22,6 +22,7 @@ class Player {
 
         this.jumpCount = 0;
         this.isAttacking = false;
+        // Vie du personnage ajustée à 1500
         this.hp = 1500;
         this.healthBar = null;
 
@@ -91,7 +92,6 @@ class Player {
         });
     }
 
-    // Hitbox mise à jour avec des valeurs doublées pour le personnage
     setHitbox() {
         this.sprite.body.setSize(32, 56);
         this.sprite.body.setOffset(16, 8);
@@ -121,7 +121,8 @@ class Player {
         this.healthBar.fillRect(x + 2, y + 2, 200, 20);
         if (this.hp > 0) {
             this.healthBar.fillStyle(0x00ff00, 1);
-            this.healthBar.fillRect(x + 2, y + 2, (this.hp / 7000) * 200, 20);
+            // Calcul de la barre de vie ajusté pour 1500 HP
+            this.healthBar.fillRect(x + 2, y + 2, (this.hp / 1500) * 200, 20);
         }
     }
 
@@ -152,7 +153,6 @@ class Player {
         if (this.downKey.isDown) {
             this.sprite.setVelocityX(0);
             this.sprite.anims.play('turn');
-            // Hitbox pour l'accroupissement ajustée
             this.sprite.body.setSize(36, 36);
             this.sprite.body.setOffset(14, 28);
             return;
