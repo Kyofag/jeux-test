@@ -94,7 +94,6 @@ class Player {
         });
     }
 
-    // Fonction corrigée pour la taille et l'offset de la hitbox
     setHitbox() {
         this.sprite.body.setSize(14, 28);
         this.sprite.body.setOffset(9, 4);
