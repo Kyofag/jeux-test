@@ -1,43 +1,37 @@
-// La classe GameScene est le cœur du jeu.
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
         this.player1 = null;
         this.player2 = null;
         this.arena = null;
-        this.gameOver = false; // Variable pour vérifier si le jeu est terminé.
+        this.gameOver = false;
         this.canDamageP1 = true;
         this.canDamageP2 = true;
     }
 
     preload() {
-        // Charge toutes les ressources nécessaires pour le jeu.
         this.load.image('background', 'image/background.png');
         this.load.image('platform', 'image/platform.png');
-        this.load.spritesheet('player_sprite', 'image/asset1.png', { frameWidth: 32, frameHeight: 32 });
+        // On charge l'atlas de sprites avec le bon nom de fichier.
+        this.load.atlas('player_sprite', 'image/test.png', 'test_atlas.json');
     }
 
     create() {
         this.resetGame();
 
-        // Crée l'arrière-plan.
         this.add.image(0, 0, 'background').setOrigin(0, 0).setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
         
-        // Crée une instance de l'arène et des deux joueurs.
         this.arena = new Arena(this);
         this.player1 = new Player(this, 1);
         this.player2 = new Player(this, 2);
 
-        // Gère les collisions entre les objets physiques.
         this.physics.add.collider(this.player1.sprite, this.arena.getPlatforms());
         this.physics.add.collider(this.player2.sprite, this.arena.getPlatforms());
         this.physics.add.collider(this.player1.sprite, this.player2.sprite);
 
-        // Crée les barres de vie des joueurs.
         this.player1.createHealthBar(50, 20);
         this.player2.createHealthBar(this.sys.game.config.width - 250, 20);
 
-        // Détecte les collisions entre les hitboxes d'attaque et les sprites des joueurs pour infliger des dégâts.
         this.physics.add.overlap(this.player1.attackHitbox, this.player2.sprite, () => {
             if (this.player1.attackHitbox.body.enable && this.canDamageP1) {
                 this.player2.takeDamage();
@@ -53,7 +47,6 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Texte de fin de partie (initialement caché).
         this.gameOverText = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, '', {
             fontSize: '64px',
             fill: '#fff',
@@ -104,7 +97,6 @@ class GameScene extends Phaser.Scene {
             return;
         }
 
-        // Met à jour la logique des deux joueurs à chaque image.
         if (this.player1) {
             this.player1.update();
         }
@@ -112,7 +104,6 @@ class GameScene extends Phaser.Scene {
             this.player2.update();
         }
 
-        // Vérifie si un joueur est mort.
         if (this.player1.hp <= 0 && !this.gameOver) {
             this.endGame('Joueur 2 a gagné !');
         } else if (this.player2.hp <= 0 && !this.gameOver) {
@@ -125,7 +116,6 @@ class GameScene extends Phaser.Scene {
         this.gameOverText.setText(winnerText).setVisible(true);
         this.backToMenuButton.setVisible(true);
 
-        // Arrête les mouvements des joueurs
         this.player1.sprite.setVelocity(0);
         this.player2.sprite.setVelocity(0);
         this.player1.sprite.body.enable = false;
