@@ -17,7 +17,7 @@ class Player {
         this.sprite.setCollideWorldBounds(true);
         this.sprite.setTint(startColor);
 
-        // Code pour doubler la taille du personnage
+        // Code pour doubler la taille visuelle du personnage
         this.sprite.setScale(2);
 
         this.jumpCount = 0;
@@ -91,6 +91,7 @@ class Player {
         });
     }
 
+    // Hitbox mise à jour avec des valeurs doublées pour le personnage
     setHitbox() {
         this.sprite.body.setSize(32, 56);
         this.sprite.body.setOffset(16, 8);
@@ -151,6 +152,7 @@ class Player {
         if (this.downKey.isDown) {
             this.sprite.setVelocityX(0);
             this.sprite.anims.play('turn');
+            // Hitbox pour l'accroupissement ajustée
             this.sprite.body.setSize(36, 36);
             this.sprite.body.setOffset(14, 28);
             return;
@@ -176,9 +178,8 @@ class Player {
         if (this.sprite.body.touching.down) {
             this.jumpCount = 2;
         }
-        // Valeur de saut doublée pour correspondre à la taille du personnage.
         if (Phaser.Input.Keyboard.JustDown(this.jumpKey) && this.jumpCount > 0) {
-            this.sprite.setVelocityY(-660); // Doublé de -330 à -660
+            this.sprite.setVelocityY(-660); 
             this.jumpCount--;
             this.sprite.anims.play('jump');
         }
